@@ -4,15 +4,6 @@ import ProductCard from '../components/ProductCard';
 import SummaryCard from '../components/SummaryCard';
 import { mockProducts } from '../data/mockProducts';
 
-function SparkLogo() {
-  return (
-    <div className="spark-logo" aria-hidden="true">
-      <span className="spark-logo__mark">*</span>
-      <span className="spark-logo__text">_RK</span>
-    </div>
-  );
-}
-
 function CategoryIcon({ type }) {
   if (type === 'skincare') {
     return (
@@ -153,8 +144,10 @@ function Dashboard() {
         <section className="dashboard-summary">
           <div className="page-container dashboard-summary__inner">
             <div className="dashboard-summary__left">
-              <SparkLogo />
-              <p>Your shelf deserves better</p>
+              <h2>Your Shelf</h2>
+              <p>
+                {totalProducts} products • {expiringSoon} expiring soon
+              </p>
             </div>
 
             <div className="dashboard-summary__right">
