@@ -151,7 +151,7 @@ svg {
 
 .hero-section {
   position: relative;
-  height: 420px;
+  height: 340px;
   overflow: hidden;
   background:
     radial-gradient(circle at 8% 46%, rgba(255, 248, 241, 0.78) 0 11%, transparent 12%),
@@ -210,7 +210,7 @@ svg {
 
 .hero-card h1 {
   margin: 0;
-  font-size: 54px;
+  font-size: 44px;
   line-height: 0.98;
   letter-spacing: -2px;
   font-weight: 600;
@@ -252,8 +252,8 @@ svg {
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding-top: 20px;
-  padding-bottom: 12px;
+  padding-top: 12px;
+  padding-bottom: 8px;
 }
 
 .dashboard-summary__left {
@@ -338,9 +338,9 @@ svg {
   display: grid;
   grid-template-columns: 228px minmax(0, 1fr);
   align-items: start;
-  column-gap: 24px;
+  column-gap: 18px;
   row-gap: 24px;
-  padding-top: 20px;
+  padding-top: 0px;
   padding-bottom: 40px;
 }
 
@@ -350,7 +350,7 @@ svg {
 
 .shelf-sidebar h2 {
   margin: 0 0 14px;
-  font-size: 46px;
+  font-size: 36px;
   line-height: 0.96;
   font-weight: 600;
   letter-spacing: -2px;
@@ -427,7 +427,7 @@ svg {
 .product-card,
 .add-card {
   position: relative;
-  height: 360px;
+  height: 320px;
   border-radius: 26px;
   background: rgba(255, 252, 248, 0.94);
   border: 1px solid rgba(238, 228, 221, 0.72);

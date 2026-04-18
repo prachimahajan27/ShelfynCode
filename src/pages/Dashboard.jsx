@@ -144,10 +144,10 @@ function Dashboard() {
         <section className="dashboard-summary">
           <div className="page-container dashboard-summary__inner">
             <div className="dashboard-summary__left">
-              <h2>Your Shelf</h2>
+              {/* <h2>Your Shelf</h2>
               <p>
-                {totalProducts} products <span aria-hidden="true">&bull;</span> {expiringSoon} expiring soon
-              </p>
+                {totalProducts} products • {expiringSoon} expiring soon
+              </p> */}
             </div>
 
             <div className="dashboard-summary__right">
