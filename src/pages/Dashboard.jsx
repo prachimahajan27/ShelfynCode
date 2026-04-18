@@ -69,8 +69,64 @@ function PlusIcon() {
   );
 }
 
+function FilterIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M5 7h14M8 12h8M10 17h4"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function CloseIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M7 7l10 10M17 7 7 17"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
+function ShelfFiltersPanel() {
+  return (
+    <>
+      <h2>
+        Your
+        <span>Shelf</span>
+      </h2>
+      <p>Keep your collection fresh and loved. Keep track of every drop.</p>
+
+      <button type="button" className="shelf-sidebar__filter is-active">
+        <GridIcon />
+        <span>All Items</span>
+      </button>
+
+      <button type="button" className="shelf-sidebar__filter">
+        <CategoryIcon type="skincare" />
+        <span>Skincare</span>
+      </button>
+
+      <button type="button" className="shelf-sidebar__filter">
+        <CategoryIcon type="makeup" />
+        <span>Makeup</span>
+      </button>
+    </>
+  );
+}
+
 function Dashboard() {
   const [products] = useState(mockProducts);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
 
   const totalProducts = products.length;
   const expiringSoon = products.filter((product) => product.status === 'expiring').length;
@@ -82,82 +138,108 @@ function Dashboard() {
 
       <main className="dashboard-page">
         <section className="hero-section">
-          <div className="hero-card">
-            <h1>Shelfyn</h1>
-            <p>Too pretty to expire.</p>
-            <button type="button" className="hero-card__button">
-              <PlusIcon />
-              <span>Start My Vanity</span>
-            </button>
+          <div className="page-container hero-section__inner">
+            <div className="hero-card">
+              <h1>Shelfyn</h1>
+              <p>Too pretty to expire.</p>
+              <button type="button" className="hero-card__button">
+                <PlusIcon />
+                <span>Start My Vanity</span>
+              </button>
+            </div>
           </div>
         </section>
 
         <section className="dashboard-summary">
-          <div className="dashboard-summary__left">
-            <SparkLogo />
-            <p>Your shelf deserves better</p>
-          </div>
+          <div className="page-container dashboard-summary__inner">
+            <div className="dashboard-summary__left">
+              <SparkLogo />
+              <p>Your shelf deserves better</p>
+            </div>
 
-          <div className="dashboard-summary__right">
-            <SummaryCard label="Total Products" value={totalProducts} tone="safe" />
-            <SummaryCard label="Expiring Soon" value={expiringSoon} tone="warning" />
-            <SummaryCard label="Expired" value={expired} tone="danger" />
+            <div className="dashboard-summary__right">
+              <SummaryCard label="Total Products" value={totalProducts} tone="safe" />
+              <SummaryCard label="Expiring Soon" value={expiringSoon} tone="warning" />
+              <SummaryCard label="Expired" value={expired} tone="danger" />
+            </div>
           </div>
         </section>
 
         <section className="shelf-layout">
-          <aside className="shelf-sidebar">
-            <h2>
-              Your
-              <span>Shelf</span>
-            </h2>
-            <p>Keep your collection fresh and loved. Keep track of every drop.</p>
+          <div className="page-container shelf-layout__inner">
+            <aside className="shelf-sidebar">
+              <ShelfFiltersPanel />
+            </aside>
 
-            <button type="button" className="shelf-sidebar__filter is-active">
-              <GridIcon />
-              <span>All Items</span>
-            </button>
-
-            <button type="button" className="shelf-sidebar__filter">
-              <CategoryIcon type="skincare" />
-              <span>Skincare</span>
-            </button>
-
-            <button type="button" className="shelf-sidebar__filter">
-              <CategoryIcon type="makeup" />
-              <span>Makeup</span>
-            </button>
-          </aside>
-
-          <div className="shelf-content">
-            <div className="shelf-grid">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-
-              <button type="button" className="add-card">
-                <span className="add-card__icon">
-                  <PlusIcon />
-                </span>
-                <strong>Add New Product</strong>
-                <span>Keep your collection organized</span>
+            <div className="shelf-content">
+              <button
+                type="button"
+                className="filters-trigger"
+                onClick={() => setIsFiltersOpen(true)}
+              >
+                <FilterIcon />
+                <span>Filters</span>
               </button>
+
+              <div className="shelf-grid">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+
+                <button type="button" className="add-card">
+                  <span className="add-card__icon">
+                    <PlusIcon />
+                  </span>
+                  <strong>Add New Product</strong>
+                  <span>Keep your collection organized</span>
+                </button>
+              </div>
             </div>
           </div>
         </section>
       </main>
 
-      <footer className="dashboard-footer">
-        <div>
-          <h3>Shelfyn</h3>
-          <p>&copy; 2024 Shelfyn Luminous Vanity. All rights reserved.</p>
-        </div>
+      {isFiltersOpen && (
+        <div className="filters-drawer" role="dialog" aria-modal="true">
+          <button
+            type="button"
+            className="filters-drawer__backdrop"
+            aria-label="Close filters"
+            onClick={() => setIsFiltersOpen(false)}
+          />
 
-        <div className="dashboard-footer__links">
-          <span>Sustainability</span>
-          <span>Privacy</span>
-          <span>Terms</span>
-          <span>Stockists</span>
+          <div className="filters-drawer__panel">
+            <div className="filters-drawer__header">
+              <button
+                type="button"
+                className="filters-drawer__close"
+                aria-label="Close filters"
+                onClick={() => setIsFiltersOpen(false)}
+              >
+                <CloseIcon />
+              </button>
+            </div>
+
+            <div className="filters-drawer__content">
+              <ShelfFiltersPanel />
+            </div>
+          </div>
+        </div>
+      )}
+
+      <footer className="dashboard-footer">
+        <div className="page-container dashboard-footer__inner">
+          <div>
+            <h3>Shelfyn</h3>
+            <p>&copy; 2024 Shelfyn Luminous Vanity. All rights reserved.</p>
+          </div>
+
+          <div className="dashboard-footer__links">
+            <span>Sustainability</span>
+            <span>Privacy</span>
+            <span>Terms</span>
+            <span>Stockists</span>
+          </div>
         </div>
       </footer>
     </div>
