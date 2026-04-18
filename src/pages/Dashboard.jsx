@@ -146,7 +146,7 @@ function Dashboard() {
             <div className="dashboard-summary__left">
               <h2>Your Shelf</h2>
               <p>
-                {totalProducts} products • {expiringSoon} expiring soon
+                {totalProducts} products <span aria-hidden="true">&bull;</span> {expiringSoon} expiring soon
               </p>
             </div>
 

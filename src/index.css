@@ -43,8 +43,8 @@ svg {
   width: 100%;
   max-width: 100%;
   margin: 0 auto;
-  padding-left: 18px;
-  padding-right: 18px;
+  padding-left: 20px;
+  padding-right: 20px;
 }
 
 .dashboard-shell {
@@ -151,7 +151,7 @@ svg {
 
 .hero-section {
   position: relative;
-  height: 500px;
+  height: 420px;
   overflow: hidden;
   background:
     radial-gradient(circle at 8% 46%, rgba(255, 248, 241, 0.78) 0 11%, transparent 12%),
@@ -193,9 +193,9 @@ svg {
 .hero-card {
   position: relative;
   z-index: 1;
-  width: min(100%, 430px);
-  min-height: 288px;
-  padding: 30px 28px;
+  width: min(100%, 400px);
+  min-height: 256px;
+  padding: 26px 24px;
   border: 1px solid rgba(255, 255, 255, 0.55);
   border-radius: 34px;
   background: rgba(255, 251, 247, 0.84);
@@ -210,17 +210,17 @@ svg {
 
 .hero-card h1 {
   margin: 0;
-  font-size: 60px;
+  font-size: 54px;
   line-height: 0.98;
-  letter-spacing: -2.5px;
+  letter-spacing: -2px;
   font-weight: 600;
   color: #534a50;
 }
 
 .hero-card p {
-  margin: 12px 0 24px;
-  font-size: 17px;
-  line-height: 1.55;
+  margin: 10px 0 20px;
+  font-size: 15px;
+  line-height: 1.5;
   color: #7e767b;
   max-width: 100%;
 }
@@ -231,10 +231,10 @@ svg {
   gap: 10px;
   border: 0;
   border-radius: 999px;
-  padding: 15px 28px;
+  padding: 14px 24px;
   background: linear-gradient(135deg, #cb5f95, #de78a5);
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   box-shadow: 0 12px 24px rgba(203, 95, 149, 0.18);
   cursor: pointer;
@@ -244,62 +244,51 @@ svg {
 .dashboard-summary {
   background: #fbf8f4;
   border-top: 0;
+  border-bottom: 0;
 }
 
 .dashboard-summary__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 24px;
-  padding-top: 30px;
-  padding-bottom: 18px;
+  gap: 20px;
+  padding-top: 20px;
+  padding-bottom: 12px;
 }
 
 .dashboard-summary__left {
   display: flex;
-  align-items: center;
-  gap: 14px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.dashboard-summary__left h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.05;
+  font-weight: 600;
+  color: #564f54;
 }
 
 .dashboard-summary__left p {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: 14px;
+  line-height: 1.45;
   color: #70696f;
-}
-
-.spark-logo {
-  min-width: 138px;
-  height: 42px;
-  border-radius: 999px;
-  background: #fff0f5;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  color: #c25b91;
-  font-weight: 600;
-}
-
-.spark-logo__mark {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.spark-logo__text {
-  font-size: 16px;
-  letter-spacing: 1px;
 }
 
 .dashboard-summary__right {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+  justify-content: flex-end;
 }
 
 .summary-card {
-  height: 42px;
-  padding: 0 16px;
+  height: 40px;
+  padding: 0 14px;
   border-radius: 999px;
   background: rgba(255, 252, 249, 0.92);
   border: 1px solid rgba(234, 225, 217, 0.86);
@@ -329,7 +318,7 @@ svg {
 
 .summary-card__value,
 .summary-card__label {
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .summary-card__value {
@@ -349,10 +338,10 @@ svg {
   display: grid;
   grid-template-columns: 228px minmax(0, 1fr);
   align-items: start;
-  column-gap: 26px;
-  row-gap: 40px;
-  padding-top: 26px;
-  padding-bottom: 56px;
+  column-gap: 24px;
+  row-gap: 24px;
+  padding-top: 20px;
+  padding-bottom: 40px;
 }
 
 .shelf-sidebar {
@@ -360,9 +349,9 @@ svg {
 }
 
 .shelf-sidebar h2 {
-  margin: 0 0 18px;
-  font-size: 52px;
-  line-height: 0.94;
+  margin: 0 0 14px;
+  font-size: 46px;
+  line-height: 0.96;
   font-weight: 600;
   letter-spacing: -2px;
   color: #564f54;
@@ -374,10 +363,10 @@ svg {
 }
 
 .shelf-sidebar p {
-  margin: 0 0 22px;
+  margin: 0 0 18px;
   max-width: 200px;
-  font-size: 13px;
-  line-height: 1.7;
+  font-size: 12px;
+  line-height: 1.6;
   color: #92888e;
 }
 
@@ -385,10 +374,10 @@ svg {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 12px;
-  min-height: 48px;
-  margin-bottom: 10px;
-  padding: 0 16px;
+  gap: 10px;
+  min-height: 44px;
+  margin-bottom: 8px;
+  padding: 0 14px;
   border: 1px solid transparent;
   border-radius: 20px;
   background: rgba(255, 252, 249, 0.72);
@@ -399,8 +388,8 @@ svg {
 }
 
 .shelf-sidebar__filter svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   color: #a1919c;
 }
 
@@ -427,7 +416,7 @@ svg {
 .shelf-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
+  gap: 18px;
   align-items: stretch;
 }
 
@@ -438,15 +427,15 @@ svg {
 .product-card,
 .add-card {
   position: relative;
-  height: 380px;
-  border-radius: 30px;
+  height: 360px;
+  border-radius: 26px;
   background: rgba(255, 252, 248, 0.94);
   border: 1px solid rgba(238, 228, 221, 0.72);
   box-shadow: 0 12px 28px rgba(53, 33, 22, 0.045);
 }
 
 .product-card {
-  padding: 18px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -454,8 +443,8 @@ svg {
 
 .product-card__badge {
   position: absolute;
-  top: 22px;
-  left: 22px;
+  top: 18px;
+  left: 18px;
   z-index: 1;
   display: inline-flex;
   align-items: center;
@@ -483,7 +472,7 @@ svg {
 }
 
 .product-card__art {
-  height: 220px;
+  height: 170px;
   border-radius: 18px;
   overflow: hidden;
   position: relative;
@@ -615,13 +604,13 @@ svg {
 }
 
 .product-card__body {
-  padding: 18px 6px 0;
+  padding: 14px 4px 0;
 }
 
 .product-card__body h3 {
   margin: 0;
-  font-size: 17px;
-  line-height: 1.3;
+  font-size: 16px;
+  line-height: 1.25;
   font-weight: 600;
   color: #4a4a4a;
   overflow-wrap: anywhere;
@@ -629,15 +618,15 @@ svg {
 
 .product-card__body p {
   margin: 6px 0 0;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.45;
   color: #8f868d;
   overflow-wrap: anywhere;
 }
 
 .product-card__footer {
   margin-top: auto;
-  padding: 14px 6px 0;
+  padding: 12px 4px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -648,7 +637,7 @@ svg {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
   min-width: 0;
   line-height: 1.5;
@@ -684,8 +673,8 @@ svg {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 14px;
-  padding: 24px;
+  gap: 12px;
+  padding: 20px;
   color: #302c31;
   cursor: pointer;
 }
@@ -702,7 +691,7 @@ svg {
 }
 
 .add-card strong {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   color: #4a4a4a;
 }
@@ -711,8 +700,8 @@ svg {
   max-width: 160px;
   text-align: center;
   color: #92888e;
-  font-size: 13px;
-  line-height: 1.55;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .dashboard-footer {
@@ -755,7 +744,6 @@ svg {
     padding-left: 16px;
     padding-right: 16px;
   }
-  
 
   .shelf-layout__inner {
     grid-template-columns: 1fr;
@@ -774,8 +762,8 @@ svg {
 
 @media (max-width: 768px) {
   .page-container {
-    padding-left: 10px;
-    padding-right: 10px;
+    padding-left: 12px;
+    padding-right: 12px;
   }
 
   .navbar {
@@ -816,7 +804,7 @@ svg {
 
   .hero-section {
     height: auto;
-    min-height: 40px;
+    min-height: 300px;
   }
 
   .hero-section__inner {
@@ -825,8 +813,8 @@ svg {
   }
 
   .hero-card {
-    min-height: 228px;
-    padding: 24px 20px;
+    min-height: 220px;
+    padding: 22px 18px;
   }
 
   .hero-card h1 {
@@ -860,6 +848,7 @@ svg {
 
   .dashboard-summary__right {
     width: 100%;
+    justify-content: flex-start;
   }
 
   .summary-card {
