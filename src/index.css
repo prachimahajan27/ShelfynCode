@@ -358,8 +358,9 @@ svg {
 }
 
 .shelf-sidebar h2 span {
-  display: block;
+  display: inline;
   color: #cf9cb9;
+  margin-left: 8px;
 }
 
 .shelf-sidebar p {
