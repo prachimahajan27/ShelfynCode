@@ -86,16 +86,16 @@ svg {
 .navbar__link {
   border: 0;
   background: transparent;
-  padding: 0 0 px;
+  padding: 0 0 6px;
   color: #8d858a;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .navbar__link.is-active {
   color: #bf5a8d;
-  border-bottom: 2px solid #d77aa7;
+  border-bottom: 1.5px solid #d77aa7;
 }
 
 .navbar__actions {
