@@ -57,7 +57,7 @@ svg {
 
 .navbar {
   height: 68px;
-  background: rgba(255, 252, 249, 0.94);
+  background: #f6f1eb;
   border-bottom: 1px solid rgba(227, 217, 209, 0.7);
   backdrop-filter: blur(14px);
 }
@@ -88,14 +88,14 @@ svg {
   background: transparent;
   padding: 0 0 6px;
   color: #8d858a;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 500;
   cursor: pointer;
 }
 
 .navbar__link.is-active {
   color: #bf5a8d;
-  border-bottom: 1.5px solid #d77aa7;
+  border-bottom: 2px solid #d77aa7;
 }
 
 .navbar__actions {
@@ -110,10 +110,10 @@ svg {
   gap: 8px;
   border: 0;
   border-radius: 999px;
-  padding: 13px 26px;
+  padding: 11px 22px;
   background: linear-gradient(135deg, #cb5e96, #dd6f9f);
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   box-shadow: 0 10px 22px rgba(201, 95, 145, 0.16);
   cursor: pointer;
@@ -127,8 +127,8 @@ svg {
 }
 
 .navbar__avatar {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border: 1px solid rgba(228, 218, 210, 0.9);
   border-radius: 50%;
   background: #fffaf6;
@@ -193,7 +193,7 @@ svg {
 .hero-card {
   position: relative;
   z-index: 1;
-  width: min(100%, 360px);
+  width: min(100%, 430px);
   min-height: 288px;
   padding: 30px 28px;
   border: 1px solid rgba(255, 255, 255, 0.55);
@@ -214,7 +214,7 @@ svg {
   line-height: 0.98;
   letter-spacing: -2.5px;
   font-weight: 600;
-  color: #211d21;
+  color: #534a50;
 }
 
 .hero-card p {
@@ -365,7 +365,7 @@ svg {
   line-height: 0.94;
   font-weight: 600;
   letter-spacing: -2px;
-  color: #222025;
+  color: #564f54;
 }
 
 .shelf-sidebar h2 span {
@@ -483,7 +483,7 @@ svg {
 }
 
 .product-card__art {
-  height: 126px;
+  height: 220px;
   border-radius: 18px;
   overflow: hidden;
   position: relative;
@@ -723,12 +723,12 @@ svg {
   align-items: center;
   justify-content: space-between;
   gap: 32px;
-  padding-top: 52px;
-  padding-bottom: 52px;
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
 
 .dashboard-footer h3 {
-  margin: 0 0 12px;
+  margin: 0 0 6px;
   color: #c1598e;
   font-size: 20px;
   font-weight: 600;
@@ -754,6 +754,7 @@ svg {
     padding-left: 16px;
     padding-right: 16px;
   }
+  
 
   .shelf-layout__inner {
     grid-template-columns: 1fr;
