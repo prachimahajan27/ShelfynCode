@@ -2,26 +2,26 @@ import { useState } from 'react';
 import Navbar from '../components/layout/Navbar';
 import ProductCard from '../components/shelf/ProductCard';
 import AddCard from '../components/shelf/AddCard';
+import AddProductModal from '../components/shelf/AddProductModal';
 import ShelfFiltersPanel from '../components/shelf/ShelfFiltersPanel';
 import SummaryCard from '../components/summary/SummaryCard';
-import { PlusIcon, FilterIcon, CloseIcon } from '../components/icons';
-import { mockProducts } from '../data/mockProducts';
+import { FilterIcon, CloseIcon, PlusIcon } from '../components/icons';
 import useShelfStats from '../hooks/useShelfStats';
 
 const SUMMARY_CARDS = [
-  { key: 'total', label: 'Total Products', tone: 'safe' },
-  { key: 'expiringSoon', label: 'Expiring Soon', tone: 'warning' },
-  { key: 'expired', label: 'Expired', tone: 'danger' },
+  { key: 'total',        label: 'Total Products', tone: 'safe'    },
+  { key: 'expiringSoon', label: 'Expiring Soon',  tone: 'warning' },
+  { key: 'expired',      label: 'Expired',        tone: 'danger'  },
 ];
 
-function HeroSection() {
+function HeroSection({ onOpenModal }) {
   return (
     <section className="hero-section">
       <div className="page-container hero-section__inner">
         <div className="hero-card">
           <h1>Shelfyn</h1>
           <p>Too pretty to expire.</p>
-          <button type="button" className="hero-card__button">
+          <button type="button" className="hero-card__button" onClick={onOpenModal}>
             <PlusIcon />
             <span>Start My Vanity</span>
           </button>
@@ -46,7 +46,7 @@ function DashboardSummary({ stats }) {
   );
 }
 
-function FiltersDrawer({ onClose }) {
+function FiltersDrawer({ onClose, activeFilter, onFilterChange }) {
   return (
     <div className="filters-drawer" role="dialog" aria-modal="true">
       <button
@@ -67,31 +67,46 @@ function FiltersDrawer({ onClose }) {
           </button>
         </div>
         <div className="filters-drawer__content">
-          <ShelfFiltersPanel />
+          <ShelfFiltersPanel
+            activeFilter={activeFilter}
+            onFilterChange={(f) => { onFilterChange(f); onClose(); }}
+          />
         </div>
       </div>
     </div>
   );
 }
 
-function Dashboard() {
-  const [products] = useState(mockProducts);
+function Dashboard({ activePage, onNavigate, products, onToggleFavorite, onAddProduct, onOpenModal, isModalOpen, setIsModalOpen }) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [activeFilter,  setActiveFilter]  = useState('all');
   const stats = useShelfStats(products);
+
+  // Apply category filter — 'all' shows everything
+  const visibleProducts = activeFilter === 'all'
+    ? products
+    : products.filter((p) => p.category === activeFilter);
 
   return (
     <div className="dashboard-shell">
-      <Navbar />
+      <Navbar
+        activePage={activePage}
+        onNavigate={onNavigate}
+        onOpenModal={onOpenModal}
+      />
 
       <main className="dashboard-page">
-        <HeroSection />
+        <HeroSection onOpenModal={onOpenModal} />
 
         <DashboardSummary stats={stats} />
 
         <section className="shelf-layout">
           <div className="page-container shelf-layout__inner">
             <aside className="shelf-sidebar">
-              <ShelfFiltersPanel />
+              <ShelfFiltersPanel
+                activeFilter={activeFilter}
+                onFilterChange={setActiveFilter}
+              />
             </aside>
 
             <div className="shelf-content">
@@ -105,17 +120,33 @@ function Dashboard() {
               </button>
 
               <div className="shelf-grid">
-                {products.map((product) => (
-                  <ProductCard key={product.id} product={product} />
+                {visibleProducts.map((product) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    onToggleFavorite={onToggleFavorite}
+                  />
                 ))}
-                <AddCard />
+                <AddCard onClick={onOpenModal} />
               </div>
             </div>
           </div>
         </section>
       </main>
 
-      {isFiltersOpen && <FiltersDrawer onClose={() => setIsFiltersOpen(false)} />}
+      {isFiltersOpen && (
+        <FiltersDrawer
+          onClose={() => setIsFiltersOpen(false)}
+          activeFilter={activeFilter}
+          onFilterChange={setActiveFilter}
+        />
+      )}
+      {isModalOpen && (
+        <AddProductModal
+          onClose={() => setIsModalOpen(false)}
+          onAddProduct={onAddProduct}
+        />
+      )}
 
       <footer className="dashboard-footer">
         <div className="page-container dashboard-footer__inner">
@@ -136,3 +167,4 @@ function Dashboard() {
 }
 
 export default Dashboard;
+

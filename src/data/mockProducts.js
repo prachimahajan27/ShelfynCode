@@ -7,6 +7,7 @@ export const mockProducts = [
     note: '3 days left',
     color: 'gold',
     showDot: true,
+    isFavorite: false,
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ export const mockProducts = [
     note: '142 days left',
     color: 'serum',
     showDot: true,
+    isFavorite: true,
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ export const mockProducts = [
     note: 'Discard',
     color: 'charcoal',
     showDot: true,
+    isFavorite: false,
   },
   {
     id: 4,
@@ -34,5 +37,6 @@ export const mockProducts = [
     note: '280 days left',
     color: 'cream',
     showDot: true,
+    isFavorite: true,
   },
 ];

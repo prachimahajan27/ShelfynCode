@@ -1,8 +1,8 @@
 import { PlusIcon } from '../icons';
 
-function AddCard() {
+function AddCard({ onClick }) {
   return (
-    <button type="button" className="add-card">
+    <button type="button" className="add-card" onClick={onClick}>
       <span className="add-card__icon">
         <PlusIcon />
       </span>

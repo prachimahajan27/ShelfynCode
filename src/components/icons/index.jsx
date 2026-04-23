@@ -97,6 +97,21 @@ export function CategoryIcon({ type }) {
   );
 }
 
+export function StarIcon({ filled = false }) {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path
+        d="M12 2.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16l-5.2 2.6 1-5.8L3.5 8.7l5.9-.9z"
+        fill={filled ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        strokeWidth="1.7"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
 export function StatusIcon({ status }) {
   if (status === 'expired') {
     return (
