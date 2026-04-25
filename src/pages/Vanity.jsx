@@ -2,14 +2,14 @@ import Navbar from '../components/layout/Navbar';
 import ProductCard from '../components/shelf/ProductCard';
 import { PlusIcon } from '../components/icons';
 
-function VanityHero({ onAddClick }) {
+function VanityHero({ onOpenModal }) {
   return (
     <section className="hero-section">
       <div className="page-container hero-section__inner">
         <div className="hero-card">
           <h1>My Vanity ✨</h1>
           <p>Your everyday essentials, all in one place</p>
-          <button type="button" className="hero-card__button" onClick={onAddClick}>
+          <button type="button" className="hero-card__button" onClick={onOpenModal}>
             <PlusIcon />
             <span>Add to Vanity</span>
           </button>
@@ -35,14 +35,14 @@ function VanityEmptyState({ onAddClick }) {
   );
 }
 
-function Vanity({ activePage, onNavigate, products, onToggleFavorite, onOpenModal }) {
+function Vanity({ activePage, onNavigate, products = [], onToggleFavorite, onOpenModal }) {
   // Only show safe + favorited products
   const vanityProducts = products.filter(
-    (p) => p.isFavorite && p.status === 'safe',
+    (p) => p.isFavorite && p.status === 'safe'
   );
 
   function handleAddClick() {
-    onNavigate('Dashboard');
+    onOpenModal?.();
   }
 
   return (
@@ -50,7 +50,7 @@ function Vanity({ activePage, onNavigate, products, onToggleFavorite, onOpenModa
       <Navbar activePage={activePage} onNavigate={onNavigate} onOpenModal={onOpenModal} />
 
       <main className="dashboard-page">
-        <VanityHero onAddClick={handleAddClick} />
+        <VanityHero onOpenModal={onOpenModal} />
 
         <section className="van__section">
           <div className="page-container van__inner">

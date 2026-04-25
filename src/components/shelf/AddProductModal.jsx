@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { addProduct } from "../../api/productApi";
 
 const CATEGORIES = ['Skincare', 'Makeup', 'Lip Product', 'Eye Makeup', 'Moisturizer', 'Fragrance', 'Hair Care', 'Body Care', 'Tools'];
 
@@ -55,6 +56,28 @@ function AddProductModal({ onClose, onAddProduct }) {
     expiryDate: '',
     unknownExpiry: false,
   });
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const newProduct = {
+      name: form.name,
+      category: form.category,
+      price: form.price ? Number(form.price) : null,
+      openingDate: form.openingDate || null,
+      expiryDate: form.expiryDate || null,
+      favorite: false
+    };
+
+    await addProduct(newProduct);
+
+    onAddProduct();   // refresh products
+    onClose();        // close modal
+
+  } catch (err) {
+    console.error(err);
+  }
+};
 
   // Lock body scroll while modal is open
   useEffect(() => {
@@ -112,28 +135,7 @@ function AddProductModal({ onClose, onAddProduct }) {
     return `${daysLeft} days left`;
   }
 
-  function handleSubmit(e) {
-    e.preventDefault();
-    if (!form.name.trim()) return;
-
-    const status = computeStatus(form.expiryDate, form.unknownExpiry);
-    const newProduct = {
-      id: Date.now(),
-      name: form.name.trim(),
-      category: form.category,
-      status,
-      note: buildNote(form.expiryDate, form.unknownExpiry),
-      color: CATEGORY_COLOR[form.category] ?? 'serum',
-      showDot: true,
-      isFavorite: false,
-      price: form.price ? Number(form.price) : null,
-      openingDate: form.openingDate || null,
-      expiryDate: form.expiryDate || null,
-    };
-
-    onAddProduct?.(newProduct);
-    onClose();
-  }
+  
 
   const modal = (
     <div className="apm__overlay" role="dialog" aria-modal="true" aria-label="Add Product">

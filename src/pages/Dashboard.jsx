@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from "react";
 import Navbar from '../components/layout/Navbar';
 import ProductCard from '../components/shelf/ProductCard';
 import AddCard from '../components/shelf/AddCard';
@@ -7,11 +7,12 @@ import ShelfFiltersPanel from '../components/shelf/ShelfFiltersPanel';
 import SummaryCard from '../components/summary/SummaryCard';
 import { FilterIcon, CloseIcon, PlusIcon } from '../components/icons';
 import useShelfStats from '../hooks/useShelfStats';
+import { toggleFavorite } from "../api/productApi";
 
 const SUMMARY_CARDS = [
-  { key: 'total',        label: 'Total Products', tone: 'safe'    },
-  { key: 'expiringSoon', label: 'Expiring Soon',  tone: 'warning' },
-  { key: 'expired',      label: 'Expired',        tone: 'danger'  },
+  { key: 'total', label: 'Total Products', tone: 'safe' },
+  { key: 'expiringSoon', label: 'Expiring Soon', tone: 'warning' },
+  { key: 'expired', label: 'Expired', tone: 'danger' },
 ];
 
 function HeroSection({ onOpenModal }) {
@@ -69,7 +70,10 @@ function FiltersDrawer({ onClose, activeFilter, onFilterChange }) {
         <div className="filters-drawer__content">
           <ShelfFiltersPanel
             activeFilter={activeFilter}
-            onFilterChange={(f) => { onFilterChange(f); onClose(); }}
+            onFilterChange={(filterValue) => {
+              onFilterChange(filterValue);
+              onClose();
+            }}
           />
         </div>
       </div>
@@ -77,15 +81,32 @@ function FiltersDrawer({ onClose, activeFilter, onFilterChange }) {
   );
 }
 
-function Dashboard({ activePage, onNavigate, products, onToggleFavorite, onAddProduct, onOpenModal, isModalOpen, setIsModalOpen }) {
+function Dashboard({
+  products = [],
+  activePage,
+  onNavigate,
+  onAddProduct,
+  onOpenModal,
+  isModalOpen,
+  setIsModalOpen,
+  refreshProducts,
+}) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
-  const [activeFilter,  setActiveFilter]  = useState('all');
+  const [activeFilter, setActiveFilter] = useState('all');
   const stats = useShelfStats(products);
 
-  // Apply category filter — 'all' shows everything
+  const handleFavorite = async (id) => {
+    try {
+      await toggleFavorite(id);
+      await refreshProducts?.();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const visibleProducts = activeFilter === 'all'
     ? products
-    : products.filter((p) => p.category === activeFilter);
+    : products.filter((product) => product.category === activeFilter);
 
   return (
     <div className="dashboard-shell">
@@ -124,7 +145,7 @@ function Dashboard({ activePage, onNavigate, products, onToggleFavorite, onAddPr
                   <ProductCard
                     key={product.id}
                     product={product}
-                    onToggleFavorite={onToggleFavorite}
+                    onToggleFavorite={handleFavorite}
                   />
                 ))}
                 <AddCard onClick={onOpenModal} />
@@ -141,10 +162,11 @@ function Dashboard({ activePage, onNavigate, products, onToggleFavorite, onAddPr
           onFilterChange={setActiveFilter}
         />
       )}
+
       {isModalOpen && (
         <AddProductModal
           onClose={() => setIsModalOpen(false)}
-          onAddProduct={onAddProduct}
+          onAddProduct={refreshProducts ?? onAddProduct}
         />
       )}
 
@@ -167,4 +189,3 @@ function Dashboard({ activePage, onNavigate, products, onToggleFavorite, onAddPr
 }
 
 export default Dashboard;
-
