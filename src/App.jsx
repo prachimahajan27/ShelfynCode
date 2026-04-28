@@ -3,6 +3,7 @@ import Dashboard from './pages/Dashboard';
 import Insights from './pages/Insights';
 import Vanity from './pages/Vanity';
 import Profile from './pages/Profile';
+import AddProductModal from './components/shelf/AddProductModal';
 import { getProducts } from "./api/productApi";
 
 const CATEGORY_COLOR = {
@@ -64,8 +65,8 @@ function normalizeProduct(product) {
 }
 
 function App() {
-  const [activePage, setActivePage]     = useState('Dashboard');
-  const [isModalOpen, setIsModalOpen]   = useState(false);
+  const [activePage, setActivePage] = useState('Dashboard');
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [products, setProducts] = useState([]);
 
   const fetchProducts = async () => {
@@ -83,24 +84,36 @@ function App() {
     fetchProducts();
   }, []);
   
-  function handleAddProduct(newProduct) {
-    setProducts((prev) => [...prev, normalizeProduct(newProduct)]);
-  }
-
-  // Shared props every page receives
   const sharedProps = {
     activePage,
     onNavigate: setActivePage,
     onOpenModal: () => setIsModalOpen(true),
     products,
     refreshProducts: fetchProducts,
-    onAddProduct: handleAddProduct,
   };
 
-  if (activePage === 'Insights') return <Insights activePage={activePage} onNavigate={setActivePage} products={products} />;
-  if (activePage === 'Vanity')   return <Vanity   {...sharedProps} />;
-  if (activePage === 'Profile')  return <Profile  {...sharedProps} />;
-  return <Dashboard {...sharedProps} isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />;
+  let currentPage;
+  if (activePage === 'Insights') {
+    currentPage = <Insights {...sharedProps} />;
+  } else if (activePage === 'Vanity') {
+    currentPage = <Vanity {...sharedProps} />;
+  } else if (activePage === 'Profile') {
+    currentPage = <Profile {...sharedProps} />;
+  } else {
+    currentPage = <Dashboard {...sharedProps} />;
+  }
+
+  return (
+    <>
+      {currentPage}
+      {isModalOpen && (
+        <AddProductModal
+          onClose={() => setIsModalOpen(false)}
+          onAddProduct={fetchProducts}
+        />
+      )}
+    </>
+  );
 }
 
 export default App;

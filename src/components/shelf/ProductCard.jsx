@@ -1,3 +1,4 @@
+import { Trash2 } from 'lucide-react';
 import { StatusIcon, StarIcon } from '../icons';
 
 const STATUS_LABELS = {
@@ -14,7 +15,7 @@ function ProductArt({ color }) {
   );
 }
 
-function ProductCard({ product, onToggleFavorite, vanityMode = false }) {
+function ProductCard({ product, onToggleFavorite, onDelete, vanityMode = false }) {
   const { name, category, status, note, color, showDot, isFavorite } = product;
 
   return (
@@ -23,16 +24,30 @@ function ProductCard({ product, onToggleFavorite, vanityMode = false }) {
         {STATUS_LABELS[status]}
       </div>
 
-      {/* Star / favorite toggle — only shown when handler is provided */}
-      {onToggleFavorite && (
-        <button
-          type="button"
-          className={`product-card__star${isFavorite ? ' is-active' : ''}`}
-          aria-label={isFavorite ? 'Remove from Vanity' : 'Add to Vanity'}
-          onClick={() => onToggleFavorite(product.id)}
-        >
-          <StarIcon filled={isFavorite} />
-        </button>
+      {(onDelete || onToggleFavorite) && (
+        <div className="product-card__actions">
+          {onDelete && (
+            <button
+              type="button"
+              className="product-card__delete"
+              aria-label="Delete item"
+              onClick={() => onDelete(product.id)}
+            >
+              <Trash2 size={19} strokeWidth={1.9} />
+            </button>
+          )}
+
+          {onToggleFavorite && (
+            <button
+              type="button"
+              className={`product-card__star${isFavorite ? ' is-active' : ''}`}
+              aria-label="Mark as favorite"
+              onClick={() => onToggleFavorite(product.id)}
+            >
+              <StarIcon filled={false} />
+            </button>
+          )}
+        </div>
       )}
 
       <ProductArt color={color} />
@@ -45,7 +60,6 @@ function ProductCard({ product, onToggleFavorite, vanityMode = false }) {
       <div className={`product-card__footer product-card__footer--${status}`}>
         <div className="product-card__note">
           <StatusIcon status={status} />
-          {/* vanityMode hides the "days left" note text for a cleaner look */}
           {!vanityMode && <span>{note}</span>}
         </div>
         {showDot && !vanityMode && <span className="product-card__status-dot" />}
@@ -55,4 +69,3 @@ function ProductCard({ product, onToggleFavorite, vanityMode = false }) {
 }
 
 export default ProductCard;
-

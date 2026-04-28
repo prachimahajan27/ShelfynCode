@@ -1707,40 +1707,49 @@ svg {
    Appended — no existing rules touched
 ───────────────────────────────────────── */
 
-.product-card__star {
+.product-card__actions {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: 14px;
+  right: 14px;
   z-index: 2;
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(234, 225, 217, 0.9);
-  border-radius: 50%;
-  background: rgba(255, 252, 249, 0.92);
-  color: #b5aab0;
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.product-card__star,
+.product-card__delete {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: #9ca3af;
+  opacity: 0.6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 7px;
   cursor: pointer;
-  padding: 0;
-  transition: color 0.18s ease, background 0.18s ease, border-color 0.18s ease,
-    transform 0.18s ease;
+  vertical-align: middle;
+  transition: all 0.2s ease-in-out;
 }
 
-.product-card__star svg {
-  width: 15px;
-  height: 15px;
+.product-card__star svg,
+.product-card__delete svg {
+  width: 19px;
+  height: 19px;
 }
 
-.product-card__star:hover {
-  color: #cb5e96;
-  border-color: rgba(203, 94, 150, 0.35);
+.product-card__star:hover,
+.product-card__delete:hover {
+  opacity: 1;
   transform: scale(1.1);
 }
 
+.product-card__star:hover,
 .product-card__star.is-active {
-  color: #cb5e96;
-  background: rgba(255, 235, 245, 0.95);
-  border-color: rgba(203, 94, 150, 0.35);
+  color: #6b7280;
 }
 
 /* Vanity mode card — quieter footer */
@@ -2044,4 +2053,8 @@ svg {
   .prf__info-grid {
     grid-template-columns: 1fr;
   }
+}
+
+.product-card__delete:hover {
+  color: #ef4444;
 }

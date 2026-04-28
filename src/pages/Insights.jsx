@@ -1,7 +1,6 @@
+import { useEffect, useState } from 'react';
 import Navbar from '../components/layout/Navbar';
-import { mockInsightsData } from '../data/mockInsights';
-
-// ─── Icon components ──────────────────────────────────────────────────────────
+import { getStats } from '../api/productApi';
 
 function WarningInsightIcon() {
   return (
@@ -45,13 +44,11 @@ const INSIGHT_ICONS = {
   focus: FocusInsightIcon,
 };
 
-// ─── Summary strip ─────────────────────────────────────────────────────────────
-
 const STAT_CONFIG = [
-  { key: 'total',        label: 'Total Products',  tone: 'safe'    },
-  { key: 'expiringSoon', label: 'Expiring Soon',    tone: 'warning' },
-  { key: 'expired',      label: 'Expired',          tone: 'danger'  },
-  { key: 'safe',         label: 'Safe Products',    tone: 'safe'    },
+  { key: 'total', label: 'Total Products', tone: 'safe' },
+  { key: 'expiringSoon', label: 'Expiring Soon', tone: 'warning' },
+  { key: 'expired', label: 'Expired', tone: 'danger' },
+  { key: 'safe', label: 'Safe Products', tone: 'safe' },
 ];
 
 function InsightStatCard({ value, label, tone }) {
@@ -66,28 +63,33 @@ function InsightStatCard({ value, label, tone }) {
   );
 }
 
-// ─── Value + Category split ─────────────────────────────────────────────────
-
 function ValuePanel({ value }) {
+  const {
+    totalCollection = 0,
+    percentageChange = 0,
+    expiredValue = 0,
+    savedValue = 0,
+  } = value ?? {};
+
   return (
     <div className="ins__value-panel">
       <p className="ins__panel-eyebrow">Total Collection Value</p>
       <div className="ins__value-row">
-        <span className="ins__value-big">₹{value.totalCollection.toLocaleString()}</span>
-        <span className="ins__value-change">+{value.percentageChange}%</span>
+        <span className="ins__value-big">₹{totalCollection.toLocaleString()}</span>
+        <span className="ins__value-change">+{percentageChange}%</span>
       </div>
 
       <div className="ins__value-breakdown">
         <div className="ins__breakdown-item">
           <span className="ins__breakdown-label">Expired Value</span>
           <span className="ins__breakdown-amount ins__breakdown-amount--danger">
-            −₹{value.expiredValue.toLocaleString()}
+            -₹{expiredValue.toLocaleString()}
           </span>
         </div>
         <div className="ins__breakdown-item">
           <span className="ins__breakdown-label">Saved Value</span>
           <span className="ins__breakdown-amount ins__breakdown-amount--safe">
-            +₹{value.savedValue.toLocaleString()}
+            +₹{savedValue.toLocaleString()}
           </span>
         </div>
       </div>
@@ -122,8 +124,6 @@ function CategoryPanel({ categories }) {
   );
 }
 
-// ─── Smart Insight cards ────────────────────────────────────────────────────
-
 function InsightCard({ icon, message, tone }) {
   const Icon = INSIGHT_ICONS[icon] ?? WarningInsightIcon;
   return (
@@ -135,8 +135,6 @@ function InsightCard({ icon, message, tone }) {
     </div>
   );
 }
-
-// ─── Bottom banner ──────────────────────────────────────────────────────────
 
 function InsightsBanner() {
   return (
@@ -155,17 +153,108 @@ function InsightsBanner() {
   );
 }
 
-// ─── Page root ──────────────────────────────────────────────────────────────
+function Insights({ activePage, onNavigate, products = [], onOpenModal }) {
+  const [stats, setStats] = useState({
+    total: 0,
+    safe: 0,
+    expiringSoon: 0,
+    expired: 0,
+  });
+  const [value, setValue] = useState({
+    totalCollection: 0,
+    percentageChange: 0,
+    expiredValue: 0,
+    savedValue: 0,
+  });
+  const [spendingByCategory, setSpendingByCategory] = useState([]);
+  const [insights, setInsights] = useState([]);
 
-function Insights({ activePage, onNavigate }) {
-  const { stats, value, spendingByCategory, insights } = mockInsightsData;
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  useEffect(() => {
+    const pricedProducts = products.filter((product) => Number.isFinite(Number(product.price)));
+    const totalCollection = pricedProducts.reduce((sum, product) => sum + Number(product.price || 0), 0);
+    const expiredValue = pricedProducts
+      .filter((product) => product.status === 'expired')
+      .reduce((sum, product) => sum + Number(product.price || 0), 0);
+    const savedValue = Math.max(totalCollection - expiredValue, 0);
+
+    const categoryTotals = pricedProducts.reduce((acc, product) => {
+      const key = product.category || 'Others';
+      acc[key] = (acc[key] || 0) + Number(product.price || 0);
+      return acc;
+    }, {});
+
+    const maxCategoryAmount = Math.max(...Object.values(categoryTotals), 0);
+    const derivedCategories = Object.entries(categoryTotals).map(([label, amount]) => ({
+      label,
+      amount,
+      percent: maxCategoryAmount > 0 ? Math.round((amount / maxCategoryAmount) * 100) : 0,
+    }));
+
+    const expiringThisWeek = products.filter((product) => {
+      if (!product.expiryDate) return false;
+      const msLeft = new Date(product.expiryDate) - new Date();
+      const daysLeft = Math.floor(msLeft / (1000 * 60 * 60 * 24));
+      return daysLeft >= 0 && daysLeft <= 7;
+    }).length;
+
+    const favoriteCount = products.filter((product) => product.isFavorite).length;
+    const topCategory = derivedCategories.length > 0
+      ? derivedCategories.reduce((top, current) => (current.amount > top.amount ? current : top))
+      : null;
+
+    setValue({
+      totalCollection,
+      percentageChange: 0,
+      expiredValue,
+      savedValue,
+    });
+    setSpendingByCategory(derivedCategories);
+    setInsights([
+      {
+        id: 1,
+        icon: 'warning',
+        message: `${expiringThisWeek} products are expiring this week`,
+        tone: 'warning',
+      },
+      {
+        id: 2,
+        icon: 'loss',
+        message: `You have ₹${expiredValue.toLocaleString()} worth of expired products`,
+        tone: 'danger',
+      },
+      {
+        id: 3,
+        icon: 'focus',
+        message: topCategory
+          ? `Your collection is ${topCategory.label.toLowerCase()}-focused`
+          : `${favoriteCount} products are saved in your vanity`,
+        tone: 'safe',
+      },
+    ]);
+  }, [products]);
+
+  const fetchStats = async () => {
+    try {
+      const res = await getStats();
+      setStats((prev) => ({
+        ...prev,
+        ...res.data,
+        expiringSoon: res.data?.expiringSoon ?? res.data?.expiring ?? prev.expiringSoon,
+      }));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <div className="dashboard-shell">
-      <Navbar activePage={activePage} onNavigate={onNavigate} />
+      <Navbar activePage={activePage} onNavigate={onNavigate} onOpenModal={onOpenModal} />
 
       <main className="ins__page">
-        {/* Header */}
         <section className="ins__header">
           <div className="page-container ins__header-inner">
             <h1 className="ins__page-title">Your Beauty Insights</h1>
@@ -173,18 +262,16 @@ function Insights({ activePage, onNavigate }) {
           </div>
         </section>
 
-        {/* Summary strip */}
         <section className="ins__stats-strip">
           <div className="page-container">
             <div className="ins__stats-grid">
               {STAT_CONFIG.map(({ key, label, tone }) => (
-                <InsightStatCard key={key} value={stats[key]} label={label} tone={tone} />
+                <InsightStatCard key={key} value={stats[key] ?? 0} label={label} tone={tone} />
               ))}
             </div>
           </div>
         </section>
 
-        {/* Value + Category */}
         <section className="ins__split-section">
           <div className="page-container ins__split-inner">
             <ValuePanel value={value} />
@@ -192,7 +279,6 @@ function Insights({ activePage, onNavigate }) {
           </div>
         </section>
 
-        {/* Smart Insights */}
         <section className="ins__insights-section">
           <div className="page-container">
             <h2 className="ins__section-title">Smart Insights</h2>
@@ -204,7 +290,6 @@ function Insights({ activePage, onNavigate }) {
           </div>
         </section>
 
-        {/* Bottom banner */}
         <section className="ins__banner-section">
           <div className="page-container">
             <InsightsBanner />

@@ -1,7 +1,8 @@
+import { useEffect, useMemo } from 'react';
 import Navbar from '../components/layout/Navbar';
 import { AvatarIcon } from '../components/icons';
+import { sortProductsByExpiry } from '../utils/productSort';
 
-// Mock user — replace with real auth later
 const MOCK_USER = {
   name: 'Aanya Sharma',
   handle: '@aanya',
@@ -18,11 +19,28 @@ function ProfileStatCard({ value, label, tone }) {
   );
 }
 
-function Profile({ activePage, onNavigate, products, onOpenModal }) {
-  const total     = products.length;
-  const favorites = products.filter((p) => p.isFavorite).length;
-  const expired   = products.filter((p) => p.status === 'expired').length;
-  const safe      = products.filter((p) => p.status === 'safe').length;
+function Profile({ activePage, onNavigate, products = [], onOpenModal, refreshProducts }) {
+  useEffect(() => {
+    refreshProducts?.();
+  }, []);
+
+  const sortedProducts = useMemo(() => sortProductsByExpiry(products), [products]);
+  const total = sortedProducts.length;
+  const favorites = sortedProducts.filter((product) => product.isFavorite).length;
+  const expired = sortedProducts.filter((product) => product.status === 'expired').length;
+  const safe = sortedProducts.filter((product) => product.status === 'safe').length;
+  const expiring = sortedProducts.filter((product) => product.status === 'expiring').length;
+  const categoryBreakdown = Object.entries(
+    sortedProducts.reduce((acc, product) => {
+      const key = product.category || 'Others';
+      acc[key] = (acc[key] || 0) + 1;
+      return acc;
+    }, {})
+  )
+    .sort((left, right) => right[1] - left[1])
+    .slice(0, 4);
+
+  const collectionPreview = sortedProducts.slice(0, 3);
 
   return (
     <div className="dashboard-shell">
@@ -33,11 +51,9 @@ function Profile({ activePage, onNavigate, products, onOpenModal }) {
       />
 
       <main className="dashboard-page">
-        {/* Profile hero — reuses hero-section colours */}
         <section className="hero-section prf__hero">
           <div className="page-container hero-section__inner">
             <div className="hero-card prf__card">
-              {/* Avatar circle */}
               <div className="prf__avatar">
                 <AvatarIcon />
               </div>
@@ -48,22 +64,29 @@ function Profile({ activePage, onNavigate, products, onOpenModal }) {
           </div>
         </section>
 
-        {/* Stats strip — reuses dashboard-summary layout */}
         <section className="dashboard-summary">
           <div className="page-container dashboard-summary__inner">
             <div className="dashboard-summary__left">
               <h2 className="prf__section-title">Your Collection</h2>
+              {collectionPreview.length > 0 ? (
+                collectionPreview.map((product) => (
+                  <p key={product.id}>
+                    {product.name} • {product.category}
+                  </p>
+                ))
+              ) : (
+                <p>No products added yet.</p>
+              )}
             </div>
             <div className="dashboard-summary__right">
-              <ProfileStatCard value={total}     label="Total Products" tone="safe"    />
-              <ProfileStatCard value={favorites} label="In My Vanity"   tone="safe"    />
-              <ProfileStatCard value={safe}      label="Safe to Use"    tone="safe"    />
-              <ProfileStatCard value={expired}   label="Expired"        tone="danger"  />
+              <ProfileStatCard value={total} label="Total Products" tone="safe" />
+              <ProfileStatCard value={favorites} label="In My Vanity" tone="safe" />
+              <ProfileStatCard value={safe} label="Safe to Use" tone="safe" />
+              <ProfileStatCard value={expired} label="Expired" tone="danger" />
             </div>
           </div>
         </section>
 
-        {/* Info section */}
         <section className="shelf-layout">
           <div className="page-container prf__info-grid">
             <div className="prf__info-card">
@@ -84,20 +107,51 @@ function Profile({ activePage, onNavigate, products, onOpenModal }) {
 
             <div className="prf__info-card">
               <h3 className="prf__info-title">Collection Breakdown</h3>
-              {[
-                { label: 'Safe products',     value: safe,      tone: 'safe'    },
-                { label: 'Expiring soon',     value: products.filter(p => p.status === 'expiring').length, tone: 'warning' },
-                { label: 'Expired products',  value: expired,   tone: 'danger'  },
-                { label: 'Vanity favourites', value: favorites, tone: 'safe'    },
-              ].map(({ label, value, tone }) => (
-                <div key={label} className="prf__info-row">
-                  <span className="prf__info-label">
-                    <span className={`summary-card__dot prf__inline-dot summary-card__dot--${tone}`} />
-                    {label}
-                  </span>
-                  <span className="prf__info-value">{value}</span>
-                </div>
-              ))}
+              {categoryBreakdown.length > 0 ? (
+                categoryBreakdown.map(([label, value], index) => {
+                  const tones = ['safe', 'warning', 'danger', 'safe'];
+                  return (
+                    <div key={label} className="prf__info-row">
+                      <span className="prf__info-label">
+                        <span className={`summary-card__dot prf__inline-dot summary-card__dot--${tones[index]}`} />
+                        {label}
+                      </span>
+                      <span className="prf__info-value">{value}</span>
+                    </div>
+                  );
+                })
+              ) : (
+                <>
+                  <div className="prf__info-row">
+                    <span className="prf__info-label">
+                      <span className="summary-card__dot prf__inline-dot summary-card__dot--safe" />
+                      Safe products
+                    </span>
+                    <span className="prf__info-value">{safe}</span>
+                  </div>
+                  <div className="prf__info-row">
+                    <span className="prf__info-label">
+                      <span className="summary-card__dot prf__inline-dot summary-card__dot--warning" />
+                      Expiring soon
+                    </span>
+                    <span className="prf__info-value">{expiring}</span>
+                  </div>
+                  <div className="prf__info-row">
+                    <span className="prf__info-label">
+                      <span className="summary-card__dot prf__inline-dot summary-card__dot--danger" />
+                      Expired products
+                    </span>
+                    <span className="prf__info-value">{expired}</span>
+                  </div>
+                  <div className="prf__info-row">
+                    <span className="prf__info-label">
+                      <span className="summary-card__dot prf__inline-dot summary-card__dot--safe" />
+                      Vanity favourites
+                    </span>
+                    <span className="prf__info-value">{favorites}</span>
+                  </div>
+                </>
+              )}
             </div>
           </div>
         </section>

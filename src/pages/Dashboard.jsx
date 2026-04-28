@@ -2,12 +2,12 @@ import { useState } from "react";
 import Navbar from '../components/layout/Navbar';
 import ProductCard from '../components/shelf/ProductCard';
 import AddCard from '../components/shelf/AddCard';
-import AddProductModal from '../components/shelf/AddProductModal';
 import ShelfFiltersPanel from '../components/shelf/ShelfFiltersPanel';
 import SummaryCard from '../components/summary/SummaryCard';
 import { FilterIcon, CloseIcon, PlusIcon } from '../components/icons';
 import useShelfStats from '../hooks/useShelfStats';
-import { toggleFavorite } from "../api/productApi";
+import { deleteProduct, toggleFavorite } from "../api/productApi";
+import { sortProductsByExpiry } from '../utils/productSort';
 
 const SUMMARY_CARDS = [
   { key: 'total', label: 'Total Products', tone: 'safe' },
@@ -85,10 +85,7 @@ function Dashboard({
   products = [],
   activePage,
   onNavigate,
-  onAddProduct,
   onOpenModal,
-  isModalOpen,
-  setIsModalOpen,
   refreshProducts,
 }) {
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
@@ -104,9 +101,19 @@ function Dashboard({
     }
   };
 
+  const handleDelete = async (id) => {
+    try {
+      await deleteProduct(id);
+      await refreshProducts?.();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const visibleProducts = activeFilter === 'all'
     ? products
     : products.filter((product) => product.category === activeFilter);
+  const sortedProducts = sortProductsByExpiry(visibleProducts);
 
   return (
     <div className="dashboard-shell">
@@ -141,11 +148,12 @@ function Dashboard({
               </button>
 
               <div className="shelf-grid">
-                {visibleProducts.map((product) => (
+                {sortedProducts.map((product) => (
                   <ProductCard
                     key={product.id}
                     product={product}
                     onToggleFavorite={handleFavorite}
+                    onDelete={handleDelete}
                   />
                 ))}
                 <AddCard onClick={onOpenModal} />
@@ -160,13 +168,6 @@ function Dashboard({
           onClose={() => setIsFiltersOpen(false)}
           activeFilter={activeFilter}
           onFilterChange={setActiveFilter}
-        />
-      )}
-
-      {isModalOpen && (
-        <AddProductModal
-          onClose={() => setIsModalOpen(false)}
-          onAddProduct={refreshProducts ?? onAddProduct}
         />
       )}
 

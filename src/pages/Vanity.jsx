@@ -1,18 +1,23 @@
 import Navbar from '../components/layout/Navbar';
 import ProductCard from '../components/shelf/ProductCard';
+import AddCard from '../components/shelf/AddCard';
 import { PlusIcon } from '../components/icons';
+import { deleteProduct, toggleFavorite } from '../api/productApi';
+import { sortProductsByExpiry } from '../utils/productSort';
 
-function VanityHero({ onOpenModal }) {
+function VanityHero({ onOpenModal, showButton }) {
   return (
     <section className="hero-section">
       <div className="page-container hero-section__inner">
         <div className="hero-card">
           <h1>My Vanity ✨</h1>
           <p>Your everyday essentials, all in one place</p>
-          <button type="button" className="hero-card__button" onClick={onOpenModal}>
-            <PlusIcon />
-            <span>Add to Vanity</span>
-          </button>
+          {showButton && (
+            <button type="button" className="hero-card__button" onClick={onOpenModal}>
+              <PlusIcon />
+              <span>Add to Vanity</span>
+            </button>
+          )}
         </div>
       </div>
     </section>
@@ -29,33 +34,48 @@ function VanityEmptyState({ onAddClick }) {
       </p>
       <button type="button" className="hero-card__button van__empty-btn" onClick={onAddClick}>
         <PlusIcon />
-        <span>Add Products</span>
+        <span>Start My Vanity</span>
       </button>
     </div>
   );
 }
 
-function Vanity({ activePage, onNavigate, products = [], onToggleFavorite, onOpenModal }) {
-  // Only show safe + favorited products
-  const vanityProducts = products.filter(
-    (p) => p.isFavorite && p.status === 'safe'
+function Vanity({ activePage, onNavigate, products = [], onOpenModal, refreshProducts }) {
+  const vanityProducts = sortProductsByExpiry(
+    products.filter((product) => product.isFavorite && product.status === 'safe')
   );
 
   function handleAddClick() {
     onOpenModal?.();
   }
 
+  const handleFavorite = async (id) => {
+    try {
+      await toggleFavorite(id);
+      await refreshProducts?.();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteProduct(id);
+      await refreshProducts?.();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
     <div className="dashboard-shell">
       <Navbar activePage={activePage} onNavigate={onNavigate} onOpenModal={onOpenModal} />
 
       <main className="dashboard-page">
-        <VanityHero onOpenModal={onOpenModal} />
+        <VanityHero onOpenModal={onOpenModal} showButton={vanityProducts.length > 0} />
 
         <section className="van__section">
           <div className="page-container van__inner">
-
-            {/* Sidebar label */}
             <aside className="van__sidebar">
               <h2 className="van__sidebar-title">
                 My<span>Picks</span>
@@ -69,7 +89,6 @@ function Vanity({ activePage, onNavigate, products = [], onToggleFavorite, onOpe
               </div>
             </aside>
 
-            {/* Grid or empty state */}
             <div className="van__content">
               {vanityProducts.length === 0 ? (
                 <VanityEmptyState onAddClick={handleAddClick} />
@@ -79,14 +98,15 @@ function Vanity({ activePage, onNavigate, products = [], onToggleFavorite, onOpe
                     <ProductCard
                       key={product.id}
                       product={product}
-                      onToggleFavorite={onToggleFavorite}
+                      onToggleFavorite={handleFavorite}
+                      onDelete={handleDelete}
                       vanityMode
                     />
                   ))}
+                  <AddCard onClick={onOpenModal} />
                 </div>
               )}
             </div>
-
           </div>
         </section>
       </main>
